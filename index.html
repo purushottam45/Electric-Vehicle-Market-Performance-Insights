@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EV MarketScope | Electric Vehicle Market Performance & Insights</title>
+  <meta name="description" content="Explore electric vehicle market performance, vehicle specifications, pricing, adoption, efficiency and customer insights through interactive Tableau dashboards and stories.">
+  <meta name="keywords" content="electric vehicles, EV market, Tableau dashboard, vehicle performance, EV analytics">
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/css/main.css" rel="stylesheet">
+  <style>
+    :root{--ev-ink:#142b2b;--ev-green:#16856b;--ev-lime:#b9e769;--ev-muted:#627472;--ev-bg:#f4f8f5}
+    html{scroll-behavior:smooth;scroll-padding-top:90px}
+    body{font-family:Inter,Roboto,sans-serif;color:var(--ev-ink);background:#fff}
+    .header{background:rgba(255,255,255,.96);box-shadow:0 4px 24px rgba(16,45,39,.07)}
+    .sitename{font-family:Montserrat,sans-serif;font-weight:800;letter-spacing:-1px;color:var(--ev-ink)!important}
+    .sitename span{color:var(--ev-green)}
+    .navmenu a{font-weight:600}
+    .hero{position:relative;overflow:hidden;background:radial-gradient(circle at 80% 15%,rgba(185,231,105,.24),transparent 28%),linear-gradient(135deg,#102d2b,#174f45 65%,#1b725d);color:white;padding:100px 0 75px}
+    .hero:after{content:"";position:absolute;width:440px;height:440px;border:1px solid rgba(255,255,255,.14);border-radius:50%;right:-140px;bottom:-260px;box-shadow:0 0 0 55px rgba(255,255,255,.035),0 0 0 110px rgba(255,255,255,.025)}
+    .hero .container{position:relative;z-index:1}
+    .eyebrow{display:inline-flex;gap:9px;align-items:center;padding:8px 13px;border:1px solid rgba(255,255,255,.25);border-radius:99px;background:rgba(255,255,255,.08);font-size:.78rem;font-weight:700;letter-spacing:1.4px;text-transform:uppercase}
+    .hero h1{font:800 clamp(2.5rem,5.2vw,4.7rem)/1.08 Montserrat,sans-serif;letter-spacing:-2.5px;margin:24px 0}
+    .hero h1 span{color:var(--ev-lime)}
+    .hero p{max-width:700px;color:#d8e8e2;font-size:1.08rem;line-height:1.8}
+    .btn-ev{display:inline-flex;align-items:center;gap:10px;border-radius:8px;padding:13px 21px;font-weight:700;text-decoration:none;transition:.2s}
+    .btn-ev-primary{background:var(--ev-lime);color:#163b32}.btn-ev-primary:hover{background:#d1f59b;color:#163b32;transform:translateY(-2px)}
+    .btn-ev-outline{border:1px solid rgba(255,255,255,.45);color:#fff}.btn-ev-outline:hover{background:#fff;color:var(--ev-ink)}
+    .hero-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:55px}
+    .hero-metric{padding:20px 18px;border:1px solid rgba(255,255,255,.16);border-radius:13px;background:rgba(255,255,255,.07);backdrop-filter:blur(8px)}
+    .hero-metric strong{display:block;font:800 1.8rem Montserrat,sans-serif;color:var(--ev-lime)}
+    .hero-metric span{font-size:.85rem;color:#d8e8e2}
+    .section-pad{padding:82px 0}
+    .section-heading{max-width:760px;margin:0 auto 42px;text-align:center}
+    .section-kicker{color:var(--ev-green);font-size:.78rem;font-weight:800;letter-spacing:1.6px;text-transform:uppercase}
+    .section-heading h2{font:800 clamp(1.8rem,3.3vw,2.8rem)/1.2 Montserrat,sans-serif;letter-spacing:-1.1px;margin:12px 0}
+    .section-heading p{color:var(--ev-muted);line-height:1.8;margin:0}
+    .overview-card{height:100%;border:1px solid #e1ebe5;border-radius:16px;padding:25px;background:#fff;box-shadow:0 12px 35px rgba(19,58,48,.045)}
+    .overview-card .icon{width:48px;height:48px;display:grid;place-items:center;border-radius:12px;background:#e8f5ee;color:var(--ev-green);font-size:1.4rem;margin-bottom:18px}
+    .overview-card h3{font:700 1.12rem Montserrat,sans-serif}
+    .overview-card p{color:var(--ev-muted);line-height:1.7;margin:0}
+    .data-note{background:var(--ev-bg);border-left:4px solid var(--ev-green);padding:17px 20px;border-radius:0 10px 10px 0;color:#3c5550}
+    .viz-section{background:#f6f9f7}
+    .viz-shell{background:white;border:1px solid #dfe9e3;border-radius:18px;padding:clamp(12px,2vw,24px);box-shadow:0 16px 42px rgba(19,58,48,.07)}
+    .viz-top{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin:0 0 18px}
+    .viz-top h3{font:700 1.25rem Montserrat,sans-serif;margin:0}
+    .viz-top p{color:var(--ev-muted);font-size:.9rem;margin:5px 0 0}
+    .live-tag{font-size:.75rem;font-weight:800;letter-spacing:.7px;color:#117354;background:#e6f6ed;border-radius:99px;padding:7px 11px}
+    .tableau-frame{width:100%;overflow:hidden;border-radius:10px;background:#f8faf9}
+    .tableauPlaceholder{width:100%;position:relative;min-height:560px}
+    .tableauPlaceholder object{width:100%!important;display:block}
+    .tableau-fallback{padding:28px;text-align:center;background:#f1f7f3;border:1px dashed #9bb8a8;border-radius:12px;color:#294b40}
+    .tableau-fallback a{font-weight:700;color:var(--ev-green)}
+    .tableauPlaceholder img{max-width:100%;height:auto}
+    .story-section{background:#fff}
+    .steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .step-card{padding:24px;border-radius:14px;background:var(--ev-bg);border:1px solid #e4eee8}
+    .step-num{font:800 1rem Montserrat,sans-serif;color:var(--ev-green);display:inline-block;margin-bottom:14px}
+    .step-card h3{font:700 1.05rem Montserrat,sans-serif}
+    .step-card p{margin:0;color:var(--ev-muted);line-height:1.7;font-size:.93rem}
+    .footer{background:#102d2b;color:#d7e6df;padding:35px 0}
+    .footer a{color:var(--ev-lime);text-decoration:none}
+    /* Self-contained header/navigation: remains styled even if template CSS is unavailable. */
+    #header.header{position:sticky;top:0;z-index:1000;width:100%;background:rgba(255,255,255,.97)!important;box-shadow:0 4px 22px rgba(16,45,39,.09);padding:12px 0;}
+    #header .container{width:min(1200px,100% - 40px);max-width:1200px;margin:0 auto;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px;}
+    #header .logo{display:flex!important;align-items:center;text-decoration:none!important;margin:0!important;flex:0 0 auto;}
+    #header .sitename{font-family:Montserrat,Inter,sans-serif;font-size:1.55rem;line-height:1.1;margin:0!important;color:var(--ev-ink)!important;font-weight:800;letter-spacing:-1px;}
+    #header .sitename span{color:var(--ev-green)!important;}
+    #header .navmenu{display:block!important;margin-left:auto;}
+    #header .navmenu ul{display:flex!important;align-items:center;justify-content:flex-end;gap:clamp(12px,2vw,26px);list-style:none!important;margin:0!important;padding:0!important;}
+    #header .navmenu li{display:block!important;list-style:none!important;margin:0!important;padding:0!important;}
+    #header .navmenu a{display:inline-block;color:#29433d!important;text-decoration:none!important;font-size:.93rem;font-weight:650;padding:9px 0;border-bottom:2px solid transparent;white-space:nowrap;}
+    #header .navmenu a:hover,#header .navmenu a.active{color:var(--ev-green)!important;border-bottom-color:var(--ev-lime);}
+    #header .mobile-nav-toggle{display:none!important;}
+    @media(max-width:767px){
+      #header.header{padding:12px 0;}
+      #header .container{width:calc(100% - 28px);gap:12px;align-items:flex-start!important;flex-direction:column;}
+      #header .sitename{font-size:1.35rem;}
+      #header .navmenu{width:100%;margin:0;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+      #header .navmenu::-webkit-scrollbar{display:none;}
+      #header .navmenu ul{width:max-content;min-width:100%;justify-content:flex-start;gap:22px;}
+      #header .navmenu a{font-size:.86rem;padding:7px 0;}
+    }
+    @media(max-width:767px){.hero{padding:75px 0 50px}.hero h1{letter-spacing:-1.5px}.hero-metrics{grid-template-columns:repeat(2,1fr)}.section-pad{padding:58px 0}.steps-grid{grid-template-columns:1fr}.tableauPlaceholder{min-height:440px}}
+  </style>
+</head>
+<body class="index-page">
+<header id="header" class="header d-flex align-items-center sticky-top">
+  <div class="container position-relative d-flex align-items-center justify-content-between">
+    <a href="#hero" class="logo d-flex align-items-center me-auto me-xl-0"><h1 class="sitename">EV<span>MarketScope</span></h1></a>
+    <nav id="navmenu" class="navmenu">
+      <ul>
+        <li><a href="#hero" class="active">Home</a></li>
+        <li><a href="#about">Overview</a></li>
+        <li><a href="#dashboard">Dashboard</a></li>
+        <li><a href="#story">Data Story</a></li>
+        <li><a href="#methodology">Methodology</a></li>
+      </ul>
+      <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+    </nav>
+  </div>
+</header>
+<main class="main">
+  <section id="hero" class="hero">
+    <div class="container" data-aos="fade-up">
+      <div class="eyebrow"><i class="bi bi-lightning-charge-fill"></i> Electric mobility analytics</div>
+      <h1>Electric Vehicle<br><span>Market Performance</span><br>&amp; Insights</h1>
+      <p>Explore the EV landscape through an interactive view of vehicle specifications, pricing, range, charging performance, customer ratings and market distribution. Turn complex vehicle data into clearer comparisons and useful decisions.</p>
+      <div class="d-flex flex-wrap gap-3 mt-4">
+        <a href="#dashboard" class="btn-ev btn-ev-primary">Explore dashboard <i class="bi bi-arrow-down-right"></i></a>
+        <a href="#story" class="btn-ev btn-ev-outline">Read the data story <i class="bi bi-journal-text"></i></a>
+      </div>
+      <div class="hero-metrics">
+        <div class="hero-metric"><strong>100,000</strong><span>Vehicle records in dataset</span></div>
+        <div class="hero-metric"><strong>2018–2026</strong><span>Model-year coverage</span></div>
+        <div class="hero-metric"><strong>200</strong><span>Manufacturers represented</span></div>
+        <div class="hero-metric"><strong>15</strong><span>Vehicle categories</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="section-pad">
+    <div class="container">
+      <div class="section-heading" data-aos="fade-up">
+        <span class="section-kicker">Project overview</span>
+        <h2>Understand the EV market from multiple angles</h2>
+        <p>This project brings together technical specifications, ownership economics, customer experience and market indicators to support exploration across vehicle types and regions.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="50"><div class="overview-card"><div class="icon"><i class="bi bi-speedometer2"></i></div><h3>Vehicle performance</h3><p>Compare range, motor power, torque, acceleration, top speed and drivetrain configuration.</p></div></div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100"><div class="overview-card"><div class="icon"><i class="bi bi-battery-charging"></i></div><h3>Battery &amp; charging</h3><p>Explore battery capacity, chemistry, cycle life, degradation and charging-time measures.</p></div></div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="150"><div class="overview-card"><div class="icon"><i class="bi bi-currency-dollar"></i></div><h3>Cost &amp; ownership</h3><p>Review listed price, annual insurance cost, warranty and three-year resale-value estimates.</p></div></div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200"><div class="overview-card"><div class="icon"><i class="bi bi-globe2"></i></div><h3>Market &amp; impact</h3><p>Investigate region, manufacturing country, annual sales, customer ratings and estimated CO₂ savings.</p></div></div>
+      </div>
+      <div class="data-note mt-4" data-aos="fade-up"><strong>Dataset snapshot:</strong> The supplied source files were profiled across 100,000 records and 37 fields, including model year, manufacturer, market region, vehicle category, battery metrics, performance, pricing, safety, sales and customer rating. Summary figures describe the supplied dataset and are not independently verified real-world market statistics.</div>
+    </div>
+  </section>
+
+  <section id="dashboard" class="section-pad viz-section">
+    <div class="container">
+      <div class="section-heading" data-aos="fade-up">
+        <span class="section-kicker">Interactive exploration</span>
+        <h2>EV Market Performance Dashboard</h2>
+        <p>Use the embedded Tableau dashboard to explore the available views. Where enabled, interact with filters and charts to compare vehicle segments and market indicators.</p>
+      </div>
+      <div class="viz-shell" data-aos="fade-up">
+        <div class="viz-top"><div><h3>Market performance at a glance</h3><p>Interactive Tableau Public dashboard</p></div><span class="live-tag"><i class="bi bi-circle-fill me-1"></i> EMBEDDED VIEW</span></div>
+        <div class="tableau-frame">
+          <div class="tableauPlaceholder" id="evDashboardViz">
+            <noscript><a href="https://public.tableau.com/views/ElectricVehicleMarketPerformanceInsightsdashboard/Dashboard12?:showVizHome=no&amp;:embed=true"><img alt="Electric Vehicle Market Performance Dashboard" src="https://public.tableau.com/static/images/El/ElectricVehicleMarketPerformanceInsightsdashboard/Dashboard12/1_rss.png" style="border:0;width:100%"></a></noscript>
+            <object class="tableauViz" style="display:none;">
+              <param name="host_url" value="https%3A%2F%2Fpublic.tableau.com%2F">
+              <param name="embed_code_version" value="3">
+              <param name="site_root" value="">
+              <param name="name" value="ElectricVehicleMarketPerformanceInsightsdashboard/Dashboard12">
+              <param name="tabs" value="no">
+              <param name="toolbar" value="yes">
+              <param name="static_image" value="https://public.tableau.com/static/images/El/ElectricVehicleMarketPerformanceInsightsdashboard/Dashboard12/1.png">
+              <param name="animate_transition" value="yes">
+              <param name="display_static_image" value="yes">
+              <param name="display_spinner" value="yes">
+              <param name="display_overlay" value="yes">
+              <param name="display_count" value="yes">
+              <param name="language" value="en-US">
+              <param name="filter" value="publish=yes">
+            </object>
+            <div class="tableau-fallback" hidden>
+              <p class="mb-2">The interactive dashboard could not be loaded in this page.</p>
+              <a href="https://public.tableau.com/views/ElectricVehicleMarketPerformanceInsightsdashboard/Dashboard12?:showVizHome=no" target="_blank" rel="noopener">Open the dashboard directly on Tableau Public</a>
+            </div>
+          </div>
+        </div>
+        <div class="text-end mt-3"><a class="btn-ev btn-ev-primary" href="https://public.tableau.com/views/ElectricVehicleMarketPerformanceInsightsdashboard/Dashboard12?:showVizHome=no" target="_blank" rel="noopener">Open dashboard on Tableau <i class="bi bi-box-arrow-up-right"></i></a></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="story" class="section-pad story-section">
+    <div class="container">
+      <div class="section-heading" data-aos="fade-up">
+        <span class="section-kicker">Guided data narrative</span>
+        <h2>Explore the EV Market Story</h2>
+        <p>Move from broad market patterns to the details behind vehicle performance and ownership considerations using the published Tableau story.</p>
+      </div>
+      <div class="viz-shell" data-aos="fade-up">
+        <div class="viz-top"><div><h3>Electric Vehicle Market Performance &amp; Insights</h3><p>Story-led exploration of the EV dataset</p></div><span class="live-tag"><i class="bi bi-journal-richtext me-1"></i> TABLEAU STORY</span></div>
+        <div class="tableau-frame">
+          <div class="tableauPlaceholder" id="evStoryViz">
+            <noscript><a href="https://public.tableau.com/views/ElectricVehicleMarketPerformanceInsightsStory_17936230533280/Story1?:showVizHome=no&amp;:embed=true"><img alt="Electric Vehicle Market Performance and Insights Story" src="https://public.tableau.com/static/images/El/ElectricVehicleMarketPerformanceInsightsStory_17936230533280/Story1/1_rss.png" style="border:0;width:100%"></a></noscript>
+            <object class="tableauViz" style="display:none;">
+              <param name="host_url" value="https%3A%2F%2Fpublic.tableau.com%2F">
+              <param name="embed_code_version" value="3">
+              <param name="site_root" value="">
+              <param name="name" value="ElectricVehicleMarketPerformanceInsightsStory_17936230533280/Story1">
+              <param name="tabs" value="no">
+              <param name="toolbar" value="yes">
+              <param name="static_image" value="https://public.tableau.com/static/images/El/ElectricVehicleMarketPerformanceInsightsStory_17936230533280/Story1/1.png">
+              <param name="animate_transition" value="yes">
+              <param name="display_static_image" value="yes">
+              <param name="display_spinner" value="yes">
+              <param name="display_overlay" value="yes">
+              <param name="display_count" value="yes">
+              <param name="language" value="en-US">
+              <param name="filter" value="publish=yes">
+            </object>
+            <div class="tableau-fallback" hidden>
+              <p class="mb-2">The interactive story could not be loaded in this page.</p>
+              <a href="https://public.tableau.com/views/ElectricVehicleMarketPerformanceInsightsStory_17936230533280/Story1?:showVizHome=no" target="_blank" rel="noopener">Open the story directly on Tableau Public</a>
+            </div>
+          </div>
+        </div>
+        <div class="text-end mt-3"><a class="btn-ev btn-ev-primary" href="https://public.tableau.com/views/ElectricVehicleMarketPerformanceInsightsStory_17936230533280/Story1?:showVizHome=no" target="_blank" rel="noopener">Open story on Tableau <i class="bi bi-box-arrow-up-right"></i></a></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="methodology" class="section-pad viz-section">
+    <div class="container">
+      <div class="section-heading" data-aos="fade-up">
+        <span class="section-kicker">How to use this project</span>
+        <h2>From raw data to actionable comparisons</h2>
+        <p>The analysis is organized around the supplied dataset and the Tableau views published for this project.</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card" data-aos="fade-up"><span class="step-num">01 / EXPLORE</span><h3>Filter the vehicle landscape</h3><p>Start with manufacturer, model year, category, manufacturing country or market region to narrow the comparison.</p></div>
+        <div class="step-card" data-aos="fade-up" data-aos-delay="100"><span class="step-num">02 / COMPARE</span><h3>Balance specifications and cost</h3><p>Compare range, battery capacity, charging metrics, price, insurance, warranty and resale-value estimates.</p></div>
+        <div class="step-card" data-aos="fade-up" data-aos-delay="200"><span class="step-num">03 / INTERPRET</span><h3>Consider context and trade-offs</h3><p>Use customer ratings, sales, safety ratings and estimated CO₂ savings as complementary indicators—not as a single universal ranking.</p></div>
+      </div>
+      <p class="text-center small mt-4" style="color:var(--ev-muted)">Note: The dataset includes modelled/synthetic-looking records and broad coverage across years and regions. Treat findings as dataset analysis unless the data source and collection methodology establish real-world representativeness.</p>
+    </div>
+  </section>
+</main>
+<footer class="footer">
+  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+    <div><strong>EVMarketScope</strong> <span class="mx-2">|</span> Electric Vehicle Market Performance &amp; Insights</div>
+    <div class="small">Interactive visualizations powered by <a href="https://public.tableau.com/" target="_blank" rel="noopener">Tableau Public</a></div>
+  </div>
+</footer>
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/aos/aos.js"></script>
+<script>
+  if (window.AOS) AOS.init({duration:650, once:true, offset:70});
+
+  // Tableau's generated embed pattern: one API loader for each view.
+  // View paths, IDs and static preview URLs match the supplied Tableau snippets.
+  (function () {
+    const views = [
+      { id: 'evDashboardViz', height: 1427, mobileHeight: 1977 },
+      { id: 'evStoryViz', height: 991, mobileHeight: 991 }
+    ];
+    const apiUrl = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+
+    views.forEach(function (view) {
+      const placeholder = document.getElementById(view.id);
+      if (!placeholder) return;
+      const vizObject = placeholder.querySelector('object.tableauViz');
+      if (!vizObject) return;
+
+      function sizeView() {
+        const width = Math.max(320, placeholder.clientWidth || placeholder.parentElement.clientWidth || 320);
+        vizObject.style.width = '100%';
+        vizObject.style.height = (width <= 600 ? view.mobileHeight : view.height) + 'px';
+      }
+      sizeView();
+      window.addEventListener('resize', sizeView, { passive: true });
+
+      const loader = document.createElement('script');
+      loader.type = 'text/javascript';
+      loader.src = apiUrl;
+      loader.async = true;
+      loader.onerror = function () {
+        const fallback = placeholder.querySelector('.tableau-fallback');
+        if (fallback) fallback.hidden = false;
+        vizObject.style.display = 'none';
+      };
+      vizObject.parentNode.insertBefore(loader, vizObject);
+    });
+  })();
+</script>
+</body>
+</html>
